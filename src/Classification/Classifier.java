@@ -3,20 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Main;
+package Classification;
 
-import GUI.Gui;
-import static javafx.application.Application.launch;
+import java.io.Serializable;
 
 /**
  *
  * @author Thomas
  */
-public class Main {
-
-    public static void main(String[] args) {
-        launch(Gui.class, args);
+public interface Classifier extends Serializable{
         
-    }
+    public void classify();
 
 }

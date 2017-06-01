@@ -6,7 +6,6 @@
 package Data;
 
 import Classification.CzechStemmerAgressive;
-import GUI.Gui;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.stream.Stream;
+import javafx.scene.control.TextArea;
 
 /**
  *
@@ -25,17 +25,33 @@ import java.util.stream.Stream;
  */
 public class DataUpload {
 
-    private static String stamp;
+    private String stamp;
+    private HashMap<String, Integer> filesCount = new HashMap<>();
+    private final HashMap<String, HashMap<String, String>> mapOuter = new HashMap<>();
+    private final CzechStemmerAgressive wordRoot = new CzechStemmerAgressive();
+    private final HashMap mapInner = new HashMap<>();
+    private HashMap recognized = new HashMap<>();
+    private int x = 0;
+    private String[] words;
+    private String[] wordsNonDuplciated;
 
-    private static final HashMap<String, HashMap<String, String>> mapOuter = new HashMap<>();
-    private static final CzechStemmerAgressive wordRoot = new CzechStemmerAgressive();
-    private static final HashMap mapInner = new HashMap<>();
-    private static HashMap recognized = new HashMap<>();
-    private static int x = 0;
-    private static String[] words;
-    private static String[] wordsNonDuplciated;
+    private Boolean recognizedFile;
+    private String nameFile;
 
-    public static void readAllFiles() throws Exception {
+    private String categoryFile;
+    private String classifiedAs;
+    public TextArea textArea;
+
+    public DataUpload(File file) {
+        this.recognizedFile = false;
+        this.nameFile = file.getName();
+    }
+
+    public DataUpload() {
+
+    }
+
+    public void readAllFiles() throws Exception {
         /**
          * Načtení všech dokumentů ze složky a postupné zpracování
          */
@@ -52,7 +68,7 @@ public class DataUpload {
 
     }
 
-    public static void readFile(File file) {
+    public void readFile(File file) {
 
         /**
          * zjištění kategorie článku z názvu souboru
@@ -60,15 +76,12 @@ public class DataUpload {
         String[] category = file.toString().split(" |-|_|/|\\.");
         stamp = category[2];
 
-        Gui.textArea.setText(Gui.textArea.getText() + file.getName() + "   " + stamp + "\n");
-
         /**
          * Načtení dvou Hashmap a uložení informací
          */
         mapOuter.put(file.getName(), mapInner);
-        System.out.println("cesta - " +file.getName());
-        mapInner.put("Category", stamp);
-        mapInner.put("Recognized", false);
+        // mapInner.put("Category", stamp);
+        // mapInner.put("Recognized", false);
 
         /**
          * zpracování jednotlivých souborů
@@ -82,7 +95,6 @@ public class DataUpload {
                 wordsParser(str);
 
             }
-            
 
         } catch (UnsupportedEncodingException e) {
             System.out.println(e.getMessage());
@@ -92,11 +104,12 @@ public class DataUpload {
             System.out.println(e.getMessage());
         }
 
-        Gui.textArea.setText(Gui.textArea.getText() + mapOuter.get(file.getName()) + "\n");
+        textArea.setText(textArea.getText() + file.getName() + "   " + stamp + "\n");
+        textArea.setText(textArea.getText() + mapOuter.get(file.getName()) + "\n");
 
     }
 
-    public static void wordsParser(String str) {
+    public void wordsParser(String str) {
 
         str = str.replaceAll("[^a-zA-ZěĚšŠčČřŘžŽýÝáÁíÍéÉůŮúÚ]", " ");
         str = wordRoot.stem(str);
@@ -114,14 +127,61 @@ public class DataUpload {
 
     }
 
-    public static void readTextArea(String str) {
+    public void readTextArea(String str) {
 
         // TO-DO 
     }
 
-    public static Boolean getRecognized(String nazev){
+    public void setTextArea(TextArea textArea) {
+        this.textArea = textArea;
+    }
+
+    public Boolean getRecognized(String nazev) {
         recognized.clear();
         recognized = mapOuter.get(nazev);
-        return (Boolean)recognized.get("Recognized");
+        return (Boolean) recognized.get("Recognized");
     }
+
+    public void setRecognizedFile(Boolean recognizedFile) {
+        this.recognizedFile = recognizedFile;
+    }
+
+    public void setClassifiedAs(String classifiedAs) {
+        this.classifiedAs = classifiedAs;
+    }
+
+    public HashMap<String, Integer> getFilesCount() {
+        return filesCount;
+    }
+
+    public void setFilesCount(HashMap<String, Integer> filesCount) {
+        this.filesCount = filesCount;
+    }
+
+    public String getStamp() {
+        return stamp;
+    }
+
+    public CzechStemmerAgressive getWordRoot() {
+        return wordRoot;
+    }
+
+    public HashMap getRecognized() {
+        return recognized;
+    }
+
+    public Boolean getRecognizedFile() {
+        return recognizedFile;
+    }
+
+    public String getCategoryFile() {
+        return categoryFile;
+    }
+
+    public String getClassifiedAs() {
+        return classifiedAs;
+    }
+    
+    
+
 }

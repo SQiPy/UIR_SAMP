@@ -14,60 +14,60 @@ import java.util.HashMap;
  */
 public class Categories implements Serializable {
 
-    private HashMap<String, Integer> cetnost = new HashMap<>();
+    private HashMap<String, Integer> filesCount = new HashMap<>();
 
-    private int pocetTextu;
-    private int pravdepodobnost;
+    private int textFilesCount;
+    private int probability;
     private String category;
 
     public Categories(String category) {
-        this.pocetTextu = 0;
-        this.pravdepodobnost = 0;
+        this.textFilesCount = 0;
+        this.probability = 0;
         this.category = category;
     }
 
-    public void pridej(Data.DataUpload text) {
-        text.getCetnost().forEach((k, v) -> cetnost.merge(k, v, (v1, v2) -> v1 + v2));
-        this.pocetTextu++;
+    public void add(Data.DataUpload text) {
+        text.getFilesCount().forEach((k, v) -> filesCount.merge(k, v, (v1, v2) -> v1 + v2));
+        this.textFilesCount++;
     }
 
-    public void vypocitej(Vzdalenost vz) {
-        cetnost.forEach((k, v) -> pravdepodobnost += vz.pravdepodobnost(this, k));
+    public void calculate(DistancesAndFlags.Distance distance) {
+        filesCount.forEach((k, v) -> probability += distance.probability(this, k));
     }
 
-    public HashMap<String, Integer> getCetnost() {
-        return cetnost;
+    public HashMap<String, Integer> getFilesCount() {
+        return filesCount;
     }
 
-    public int getPocetTextu() {
-        return pocetTextu;
+    public int getTextFilesCount() {
+        return textFilesCount;
     }
 
-    public int getPravdepodobnost(Vzdalenost vz) {
-        if (pravdepodobnost == 0) {
-            vypocitej(vz);
+    public int getProbability(DistancesAndFlags.Distance distance) {
+        if (probability == 0) {
+            calculate(distance);
         }
-        return pravdepodobnost;
+        return probability;
     }
 
     public String getCategory() {
         return category;
     }
 
-    public void setCetnost(HashMap<String, Integer> cetnost) {
-        this.cetnost = cetnost;
+    public void setfilesCount(HashMap<String, Integer> filesCount) {
+        this.filesCount = filesCount;
     }
 
-    public void setPocetTextu(int pocetTextu) {
-        this.pocetTextu = pocetTextu;
+    public void setTextFilesCount(int textFilesCount) {
+        this.textFilesCount = textFilesCount;
     }
 
-    public void setPravdepodobnost(int pravdepodobnost) {
-        this.pravdepodobnost = pravdepodobnost;
+    public void setProbability(int probability) {
+        this.probability = probability;
     }
 
-    public void setCategorie(String categorie) {
-        this.categorie = categorie;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 }

@@ -11,11 +11,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -40,7 +39,7 @@ public class Gui extends Application {
 
     public Stage primaryStage;
     public ListView listView;
-    public static TextArea textArea;
+    public TextArea textArea;
     public BufferedWriter BuffWriter;
     private FileWriter fileWriter;
 
@@ -51,6 +50,10 @@ public class Gui extends Application {
     private final int LIST_MARGIN = 5;
     private final int LIST_PADDING = 2;
     TextField searchTextField;
+    
+    private final DataUpload dataUpload = new DataUpload();
+
+
     int i = 3;
 
     @Override
@@ -109,19 +112,20 @@ public class Gui extends Application {
         btnUpload.setOnAction(event -> {
             textArea.setText(textArea.getText() +"Loading files... \n");
             try {
-
-                DataUpload.readAllFiles();
+                dataUpload.setTextArea(textArea);
+                dataUpload.readAllFiles();
             } catch (Exception ex) {
                 Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             textArea.setText(textArea.getText() + "DONE");
-            Gui.textArea.appendText("");
+            textArea.appendText("");
         });
         Button btnXXX = new Button("XXX");
         
         btnXXX.setOnAction(event -> {
-            System.out.println("Výsledek = "+DataUpload.getRecognized("00001_zak_pol_pod.txt"));
+            dataUpload.setTextArea(textArea);
+            System.out.println("Výsledek = "+dataUpload.getRecognized("00001_zak_pol_pod.txt"));
         });
 
         btnUpload.setPrefWidth(150);
@@ -131,6 +135,8 @@ public class Gui extends Application {
         btns.setPadding(new Insets(50, LIST_MARGIN, LIST_MARGIN, LIST_MARGIN));
         return btns;
     }
+    
+
 
     private Node RightControls() {
         VBox controls = new VBox();
@@ -169,8 +175,8 @@ public class Gui extends Application {
         textItem4.setOnAction(event -> {
             textArea.setText("Loading files... \n");
             try {
-
-                DataUpload.readAllFiles();
+                dataUpload.setTextArea(textArea);
+                dataUpload.readAllFiles();
             } catch (Exception ex) {
                 Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
             }
